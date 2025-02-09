@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title>
+
+    <style>
+      td {
+        width: 100px;
+        font-size: 30px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td id="leftTD"><img id="left" src="./images/1.gif" /></td>
+        <td></td>
+        <td id="rightTD"><img id="right" src="./images/1.gif" /></td>
+      </tr>
+      <tr>
+        <td id="leftScoreTD">0</td>
+        <td></td>
+        <td id="rightScoreTD">0</td>
+      </tr>
+    </table>
+    <script>
+      const leftTD = document.getElementById("leftTD");
+      const rightTD = document.getElementById("rightTD");
+      const left = document.getElementById("left");
+      const right = document.getElementById("right");
+      const leftScoreTD = document.getElementById("leftScoreTD");
+      const rightScoreTD = document.getElementById("rightScoreTD");
+      let myScore = 0;
+      let comScore = 0;
+
+      const myScores = [];
+      const comScores = [];
+      let winnersList = {
+        myWins: 0,
+        comWins: 0,
+      };
+
+      const localValue = JSON.parse(localStorage.getItem("score"));
+      if (localValue) {
+        winnersList = localValue;
+      }
+
+      leftTD.addEventListener("click", handleLeftClick);
+
+      function handleLeftClick() {
+        let myRand = Math.floor(Math.random() * 13) + 1;
+        let comRand = Math.floor(Math.random() * 13) + 1;
+        console.log(myRand);
+        console.log(comRand);
+        updateScore(myRand, comRand);
+        if (!checkWinner()) {
+          changeImage(myRand, comRand);
+          myScores.push(myRand);
+          comScores.push(comRand);
+          console.log(myScores);
+          console.log(comScores);
+        }
+      }
+
+      function changeImage(userRand, computerRand) {
+        leftTD.innerHTML = `<img src='./images/${userRand}.gif' />`;
+        rightTD.innerHTML = `<img src='./images/${computerRand}.gif' />`;
+      }
+
+      function updateScore(userRand, computerRand) {
+        if (userRand === computerRand) {
+          return;
+        }
+        if (userRand > computerRand) {
+          myScore++;
+        } else {
+          comScore++;
+        }
+        // leftScoreTD.innerHTML = `<p>${myScore}</p>`;
+
+        leftScoreTD.innerText = myScore;
+        rightScoreTD.innerText = comScore;
+      }
+
+      function checkWinner() {
+        if (myScore === 3 || comScore === 3) {
+          if (myScore === 3) {
+            winnersList.myWins++;
+          } else {
+            winnersList.comWins++;
+          }
+          localStorage.setItem("score", JSON.stringify(winnersList));
+          gameOver();
+          return true;
+        }
+        return false;
+      }
+
+      function gameOver() {
+        for (let index = 0; index < myScores.length; index++) {
+          const userCard = document.createElement("img");
+          userCard.src = `./images/${myScores[index]}.gif`;
+
+          const comCard = document.createElement("img");
+          comCard.src = `./images/${comScores[index]}.gif`;
+
+          leftTD.append(userCard);
+          rightTD.append(comCard);
+        }
+      }
+    </script>
+  </body>
+</html>
